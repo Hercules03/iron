@@ -1,4 +1,4 @@
-#include<varSpeedServo.h>
+#include <VarSpeedServo.h>
 
 #include<SoftwareSerial.h>
 
@@ -26,6 +26,11 @@ const int servo1_OpenPos = 0; // set the open position of servo 1
 const int servo2_OpenPos = 180; // set the open position of servo 2
 const int servo1_ClosePos = 170; // set the closed position of servo 1
 const int servo2_ClosePos = 10; // set the closed position of servo 2
+
+//Declare variables for pir sensor
+int pirRead;
+
+int HelmetStat = -1;
 
 // Declare variables for setup special effects (applies to LED eyes only for now)
 #define SETUP_NONE 0 // No special effects, just turn on the LED eyes
@@ -63,6 +68,7 @@ bool isOpen = true; // keep track of whether or not the faceplate is open
 #define FACEPLATE_CLOSED 0
 #define FACEPLATE_OPEN 1
 int facePlateCurMode = FACEPLATE_OPEN; // Keep track if the faceplate is open or closed
+
 
 // State of the LED eyes 1 = on, 2 = off
 #define LED_EYES_OFF 0
@@ -195,10 +201,10 @@ void ledEyesBrighten(){
 
   // Send data to the servos for movement
     
-  servo1.write(servo1_OpenPos, servoOpenSpeed);
-  servo2.write(servo2_OpenPos, servoOpenSpeed);
+  servo1.write(servo1_OpenPos, servoOpenSpeed, true);
+  servo2.write(servo2_OpenPos, servoOpenSpeed, true);
   
-  simDelay(1000); // wait doesn't wait long enough for servos to fully complete...
+  simDelay(1000);
 
   // Detach so motors don't "idle"
   servo1.detach();
@@ -217,10 +223,10 @@ void ledEyesBrighten(){
   servo2.attach(servo2Pin);
 
   
-  servo1.write(servo1_ClosePos, servoCloseSpeed);
-  servo2.write(servo2_ClosePos, servoCloseSpeed);
+  servo1.write(servo1_ClosePos, servoCloseSpeed, true);
+  servo2.write(servo2_ClosePos, servoCloseSpeed, true);
 
-  simDelay(1000); // wait doesn't wait long enough for servos to fully complete...
+  simDelay(1000);
 
   // Detach so motors don't "idle"
   servo1.detach();
@@ -320,10 +326,6 @@ void facePlateOpenFx(){
  * Method to execute special effects when the faceplate closes
  */
 void facePlateCloseFx(){
-#ifdef SOUND
-  playSoundEffect(SND_CLOSE);
-  simDelay(1200); //Timing for Helmet Close Sound and delay to servo closing
-#endif
 
   facePlateClose();
 
@@ -364,5 +366,16 @@ void setup() {
 }
 
 void loop(){
-    
+  pirRead = digitalRead(pirPin);
+  if (pirRead == HIGH){
+    HelmetStat =  HelmetStat * -1;
+    if (HelmetStat>0){
+      facePlateClose();   //Close the faceplate without any LED effect
+      //facePlateCloseFx();
+    }else{
+      facePlateOpen();  //Open the faceplate without any LED effect
+      //facePlateOpenFx()   //Open the faceplate with any LED effect
+    }
+  }
+  simDelay(100);
 }

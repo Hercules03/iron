@@ -3,7 +3,7 @@ Please download and include the following libraries:
 VarSpeedServo --> better function for servo --> control the servo with speed, angle, and whether it will turn till it's done or not
 ButtonEvents(Optional) --> Obtaining tap, double-tap, and press-and-hold events for buttons (Requires Library Bounce2)
 Bounce2(Optional) --> Filter undesired false states (similar to noise) caused by slightly vibration when close or open buttons and switches
-IRremote --> Library for the IR sensor
+IRremote(Optional) --> Library for the IR sensor
 SoftwareSerial --> Allows serial communication on other digital pins of an Arduino board
 
 # INSTALLATION
