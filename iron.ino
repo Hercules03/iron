@@ -370,11 +370,11 @@ void loop(){
   if (pirRead == HIGH){
     HelmetStat =  HelmetStat * -1;
     if (HelmetStat>0){
-      facePlateClose();   //Close the faceplate without any LED effect
-      //facePlateCloseFx();
+      //facePlateClose();   //Close the faceplate without any LED effect
+      facePlateCloseFx();
     }else{
-      facePlateOpen();  //Open the faceplate without any LED effect
-      //facePlateOpenFx()   //Open the faceplate with any LED effect
+      //facePlateOpen();  //Open the faceplate without any LED effect
+      facePlateOpenFx();   //Open the faceplate with any LED effect
     }
   }
   simDelay(100);
