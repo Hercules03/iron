@@ -1,6 +1,7 @@
 #include <VarSpeedServo.h>
 
-#include<SoftwareSerial.h>
+#include<Bounce2>
+#include<ButtonEvents.h>
 
 // Declare pin setting
 const int servo1Pin = 9; // set the PWM pin for servo 1
@@ -26,6 +27,9 @@ const int servo1_OpenPos = 0; // set the open position of servo 1
 const int servo2_OpenPos = 180; // set the open position of servo 2
 const int servo1_ClosePos = 170; // set the closed position of servo 1
 const int servo2_ClosePos = 10; // set the closed position of servo 2
+
+// button pin
+const int buttonPin = 4;
 
 //Declare variables for pir sensor
 int pirRead;
@@ -63,6 +67,12 @@ unsigned long callDelay = 10; //length to wait to start eye flicker after face p
 unsigned long blinkSpeed = 60; //delay between init blink on/off
 unsigned long currentPWM = 0; // keep track of where the current PWM level is at
 bool isOpen = true; // keep track of whether or not the faceplate is open
+
+// define object for primary button to handle
+// multiple button press features:
+// 1. single tap
+// 2. double tap
+ButtonEvents primaryButton = Buttonevents();
 
 // State of the faceplate 1 = open, 0 = closed
 #define FACEPLATE_CLOSED 0
@@ -354,6 +364,55 @@ void facePlateFx(){
 }
 
 /**
+ * Event handler for when the primary button is tapped once
+ */
+void handlePrimaryButtonSingleTap(){
+  movieblink();
+}
+
+/**
+ * Event handler for when the primary button is double tapped
+ */
+void handlePrimaryButtonDoubleTap(){
+  ledEyesOff();
+}
+
+/**
+ * Initializes the primary button for multi-functions
+ */
+void initPrimaryButton(){
+  // Attach the button to the pin on the board
+  primaryButton.attach(buttonPin, INPUT_PULLUP);
+  // Initialize button features...
+  primaryButton.activeLow();
+  primaryButton.debounceTime(15);
+  primaryButton.doubleTapTime(250);
+  primaryButton.holdTime(2000);
+}
+
+/**
+ * Monitor for when the primary button is pushed
+ */
+void monitorPrimaryButton(){
+  bool changed = primaryButton.update();
+
+  // Was the button pushed?
+  if (changed){
+    int event = primaryButton.event(); // Get how the button was pushed
+
+    switch(event){
+      case(tap):
+        handlePrimaryButtonSingleTap();
+        break;
+      case (doubleTap):
+        handlePrimaryButtonDoubleTap();
+        break;
+    }
+  }
+}
+
+
+/**
  * Initialization method called by the Arduino library when the board boots up
  */
 void setup() {
@@ -367,6 +426,8 @@ void setup() {
 
 void loop(){
   pirRead = digitalRead(pirPin);
+  monitorPrimaryButton();
+
   if (pirRead == HIGH){
     HelmetStat =  HelmetStat * -1;
     if (HelmetStat>0){
