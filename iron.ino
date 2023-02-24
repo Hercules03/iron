@@ -58,6 +58,9 @@ const int setupFx = SETUP_MOVIE_BLINK;
 // Uncomment this line if you don't want any special effect during setup, comment this line to disable this effect
  const int eyesFx = EYES_NONE;
 
+ // Declare variables for button control
+boolean movieblinkOnClose = false; //Blink LEDs on close of faceplate, Sequence based on Avengers Movie
+
 // Uncomment this line if you want the movie blink special effect during setup, comment this line to disable this effect
 // const int eyesFx = EYES_MOVIE_BLINK;
 
@@ -422,6 +425,8 @@ void setup() {
   simDelay(2000); // Give the serial service time to initialize
 
   startupFx(); // Run the initial features
+
+  initPrimaryButton(); // initialize the primary button
 }
 
 void loop(){
