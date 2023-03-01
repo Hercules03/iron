@@ -1,7 +1,9 @@
 #include <VarSpeedServo.h>
 
-#include<Bounce2>
+#include<Bounce2.h>
 #include<ButtonEvents.h>
+
+#include<SoftwareSerial.h>
 
 // Declare pin setting
 const int servo1Pin = 9; // set the PWM pin for servo 1
@@ -75,7 +77,7 @@ bool isOpen = true; // keep track of whether or not the faceplate is open
 // multiple button press features:
 // 1. single tap
 // 2. double tap
-ButtonEvents primaryButton = Buttonevents();
+ButtonEvents primaryButton = ButtonEvents();
 
 // State of the faceplate 1 = open, 0 = closed
 #define FACEPLATE_CLOSED 0
@@ -421,17 +423,19 @@ void monitorPrimaryButton(){
 void setup() {
   // Set up serial port
   //Serial.begin(115200);  
+  pinMode(leftEyePin, OUTPUT);
+  pinMode(rightEyePin, OUTPUT);
   
   simDelay(2000); // Give the serial service time to initialize
 
   startupFx(); // Run the initial features
 
-  initPrimaryButton(); // initialize the primary button
+  //initPrimaryButton(); // initialize the primary button
 }
 
 void loop(){
   pirRead = digitalRead(pirPin);
-  monitorPrimaryButton();
+  //monitorPrimaryButton();
 
   if (pirRead == HIGH){
     HelmetStat =  HelmetStat * -1;
